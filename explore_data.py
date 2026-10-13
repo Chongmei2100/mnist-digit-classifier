@@ -2,12 +2,18 @@ import torch
 import torchvision
 import matplotlib.pyplot as plt
 import data
-
+import model
 
 train_set = torchvision.datasets.MNIST(root='data', train=True, download=True, transform=torchvision.transforms.ToTensor())
 val_set = torchvision.datasets.MNIST(root='data', train=False, download=True, transform=torchvision.transforms.ToTensor())
 train_loader,val_loader = data.create_data_loaders(data_dir='data', batch_size=32, seed=42)
+network = model.create_model()
+print(network)
+
 for images, labels in train_loader:
+    outputs = network(images)
+    print(outputs.size())
+    print(outputs[0]) #打印第一张图片的十个分数
     print(images.size())
     print(labels.size())
     break
