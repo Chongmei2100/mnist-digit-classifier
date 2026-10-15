@@ -36,17 +36,26 @@ def evaluate(network,val_loader,loss_fn):
 
     return sample_num, total_loss/sample_num, correct_num/sample_num
 
+def main():
+    train_loader,val_loader = data.create_data_loaders(data_dir='data', batch_size=32, seed=42)
+    network = model.create_model()
+    loss_fn = torch.nn.CrossEntropyLoss()
+    optimizer=torch.optim.SGD(network.parameters(),lr=0.01)
 
-train_loader,val_loader = data.create_data_loaders(data_dir='data', batch_size=32, seed=42)
-network = model.create_model()
-loss_fn = torch.nn.CrossEntropyLoss()
-optimizer=torch.optim.SGD(network.parameters(),lr=0.01)
+    for epoch in range(3):
+        print(f"Epoch {epoch+1}")
+        a, b = train_one_epoch(network, train_loader, loss_fn, optimizer)
+        print(f"Training - Sample Number: {a}, Average Loss: {b}")
+        sample_num, avg_loss, acc = evaluate(network,val_loader,loss_fn)
+        print(f"Sample Number: {sample_num}")
+        print(f"Average Loss: {avg_loss}")
+        print(f"Accuracy: {acc*100:.2f}%")
+    #network.load_state_dict(torch.load('model.pth'))  # Load the model state dictionary from the file
+    torch.save(network.state_dict(), 'checkpoints/mnist_model.pth')  # Save the model state dictionary to a file
+    loaded_network = model.create_model()  # Create a new instance of the model
+    loaded_network.load_state_dict(torch.load('checkpoints/mnist_model.pth', weights_only=True))  # Load the saved state dictionary into the new model instance
+    print(evaluate(loaded_network, val_loader, loss_fn))  # Evaluate the loaded model on the validation set
 
-for epoch in range(3):
-    print(f"Epoch {epoch+1}")
-    a, b = train_one_epoch(network, train_loader, loss_fn, optimizer)
-    print(f"Training - Sample Number: {a}, Average Loss: {b}")
-    sample_num, avg_loss, acc = evaluate(network,val_loader,loss_fn)
-    print(f"Sample Number: {sample_num}")
-    print(f"Average Loss: {avg_loss}")
-    print(f"Accuracy: {acc*100:.2f}%")
+if __name__ == "__main__":
+    main()
+
