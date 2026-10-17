@@ -8,7 +8,7 @@ train_set = torchvision.datasets.MNIST(root='data', train=True, download=True, t
 val_set = torchvision.datasets.MNIST(root='data', train=False, download=True, transform=torchvision.transforms.ToTensor())
 train_loader,val_loader = data.create_data_loaders(data_dir='data', batch_size=32, seed=42)
 network = model.create_model()
-print(network)
+network.load_state_dict(torch.load('checkpoints/mnist_model.pth', weights_only=True)) 
 
 for images, labels in train_loader:
     outputs = network(images)
@@ -25,7 +25,8 @@ for images, labels in val_loader:
 print(len(val_loader.dataset))
 image,label = train_loader.dataset[0]
 print(label)
-
+image1, label1 = val_loader.dataset[0]
+torchvision.transforms.ToPILImage()(image1).save('examples/digit_4.png')
 plt.imshow(image[0], cmap='gray')
 # image_tensor = torchvision.transforms.ToTensor()(image) # convert PIL image to tensor
 # print(image.size())
