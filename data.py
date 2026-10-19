@@ -8,3 +8,7 @@ def create_data_loaders(data_dir='data', batch_size=32,seed=42):
     val_loader=torch.utils.data.DataLoader(val_set, batch_size, shuffle=False, num_workers=0)
     return train_loader, val_loader
 # create data loaders for training and validation
+def create_test_loader(data_dir='data', batch_size=32):
+    test_set=torchvision.datasets.MNIST(root=data_dir, train=False, download=True, transform=torchvision.transforms.ToTensor())
+    test_loader=torch.utils.data.DataLoader(test_set, batch_size, shuffle=False, num_workers=0)
+    return test_loader
